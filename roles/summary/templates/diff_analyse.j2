@@ -1,0 +1,116 @@
+#jinja2: trim_blocks: "true", lstrip_blocks: "false"
+
+Perform the diff analysis for '{{ inventory_hostname }}'
+
+Checking SW version...
+{% if device_intent.version == device_real.version %}OK
+{% else %} NOT OK (as-is: '{{ device_real.version }}', to-be: '{{ device_intent.version }}')
+{% endif %}
+
+Checking hostname...
+{% if inventory_hostname == device_real.system.hostname %}OK
+{% else %} NOT OK (as-is: '{{ device_real.system.hostname }}', to-be: '{{ inventory_hostname }}')
+{% endif %}
+
+Checking device type...
+{% if device_intent.system.type == device_real.system.type %}OK
+{% else %} NOT OK (as-is: '{{ device_real.system.type }}', to-be: '{{ device_intent.system.type }}')
+{% endif %}
+
+Checking device temperature...
+{% if device_intent.system.temperature == device_real.system.temperature %}OK
+{% else %} NOT OK (as-is: '{{ device_real.system.temperature }}', to-be: '{{ device_intent.system.temperature }}')
+{% endif %}
+
+Checking device alarms...
+{% if device_intent.system.alarm_state == device_real.system.alarm_state %}OK
+{% else %} NOT OK (as-is: '{{ device_real.system.alarm_state }}', to-be: '{{ device_intent.system.alarm_state }}')
+{% endif %}
+
+Checking device fans trays...
+{% if device_intent.system.fans_trays == device_real.system.fans_trays %}OK
+{% else %} NOT OK (as-is: '{{ device_real.system.fans_trays }}', to-be: '{{ device_intent.system.fans_trays }}')
+{% endif %}
+
+Checking device amount fans...
+{% if device_intent.system.fans == device_real.system.fans %}OK
+{% else %} NOT OK (as-is: '{{ device_real.system.fans }}', to-be: '{{ device_intent.system.fans }}')
+{% endif %}
+
+Checking device fans status...
+{% if device_intent.system.fans_status_up == device_real.system.fans_status_up %}OK
+{% else %} NOT OK (as-is: '{{ device_real.system.fans_status_up }}', to-be: '{{ device_intent.system.fans_status_up }}')
+{% endif %}
+
+Checking device amount power supplies...
+{% if device_intent.system.power_supplies == device_real.system.power_supplies %}OK
+{% else %} NOT OK (as-is: '{{ device_real.system.power_supplies }}', to-be: '{{ device_intent.system.power_supplies }}')
+{% endif %}
+
+Checking device type power supplies...
+{% if device_intent.system.power_supplies_type == device_real.system.power_supplies_type %}OK
+{% else %} NOT OK (as-is: '{{ device_real.system.power_supplies_type }}', to-be: '{{ device_intent.system.power_supplies_type }}')
+{% endif %}
+
+Checking device status power supplies...
+{% if device_intent.system.power_status_up == device_real.system.power_status_up %}OK
+{% else %} NOT OK (as-is: '{{ device_real.system.power_status_up }}', to-be: '{{ device_intent.system.power_status_up }}')
+{% endif %}
+
+Checking slots cards...
+{% for dr_slot, dr_content in device_real.cards.items() %}
+Checking slot {{ dr_slot }}...
+{% set slot_matcher = [] %}
+{% for di_slot, di_content in device_intent.cards.items() %}
+{% if dr_slot == di_slot %}
+   {% set dummy_var = slot_matcher.append(1) %}
+      Card type...
+      {% if dr_content.type == di_content.type %}
+         OK
+      {% else %} 
+         NOT OK (as-is: '{{ dr_content.type }}', to-be: '{{ di_content.type }}')
+      {% endif %}
+      Card state...
+      {% if dr_content.state == di_content.state %}
+         OK
+      {% else %} 
+         NOT OK (as-is: '{{ dr_content.state }}', to-be: '{{ di_content.state }}')
+      {% endif %}
+      Slot number...
+      {% if slot_matcher | length > 0 %}
+         OK
+      {% else %} 
+         NOT OK (There is not matching slot number in the intent)
+      {% endif %}
+ {% endif %}
+ {% endfor %}
+ {% endfor %}
+
+Checking mdas cards...
+{% for dr_slot, dr_content in device_real.mdas.items() %}
+Checking slot {{ dr_slot }}...
+{% set slot_matcher = [] %}
+{% for di_slot, di_content in device_intent.mdas.items() %}
+{% if dr_slot == di_slot %}
+   {% set dummy_var = slot_matcher.append(1) %}
+      Card type...
+      {% if dr_content.type == di_content.type %}
+         OK
+      {% else %} 
+         NOT OK (as-is: '{{ dr_content.type }}', to-be: '{{ di_content.type }}')
+      {% endif %}
+      Card state...
+      {% if dr_content.state == di_content.state %}
+         OK
+      {% else %} 
+         NOT OK (as-is: '{{ dr_content.state }}', to-be: '{{ di_content.state }}')
+      {% endif %}
+      Slot number...
+      {% if slot_matcher | length > 0 %}
+         OK
+      {% else %} 
+         NOT OK (There is not matching slot number in the intent)
+      {% endif %}
+ {% endif %}
+ {% endfor %}
+ {% endfor %}

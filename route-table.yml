@@ -1,0 +1,29 @@
+---
+- name: MODULE TO RUN A HEALTCHECK OR PRECHECK IN WBX
+  hosts: leafs
+  gather_facts: no
+  connection: ansible.netcommon.network_cli
+
+  vars:
+    cli:
+      host: "{{ inventory_hostname }}"
+      transport: cli
+
+  tasks:
+    - name: REVIEW BGP SUMMARY
+      sros_command:
+        commands:
+          - show router bgp summary
+        # wait_for: result[0] contains chosen
+        # provider: "{{ cli }}"
+      register: temp_var
+    - debug: msg="{{ temp_var.stdout_lines }}"
+
+    # - name: VRF / check RIB
+    #   sros_command:
+    #     commands:
+    #       - show router 100500 route-table
+    #     provider: "{{ cli }}"
+    #   register: temp_var
+
+    # - debug: msg="{{ temp_var.stdout_lines }}"

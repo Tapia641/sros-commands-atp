@@ -1,0 +1,142 @@
+#jinja2: trim_blocks: "true", lstrip_blocks: "false"
+device_real:
+{% for show_entry in show_output.stdout_lines %}
+{% if loop.index0 == 0 %}
+# FOR THE COMMAND 'SHOW VERSION'
+{% for line_entry in show_entry %}
+{% if 'TiMOS' in line_entry %}
+    version: {{ line_entry.split(' ')[0].split('-')[3] }}
+{% endif %}
+{% endfor %}
+
+{% endif %}
+
+{% if loop.index0 == 1 %}
+# FOR THE COMMAND 'SHOW CHASSIS'
+    system:
+
+{% set count =  namespace(value=0) %}
+{% set fans_values = namespace(found=false) %}
+
+{% for line_entry in show_entry %}
+{% set clean_line = [] %}
+
+{% for elem in line_entry.split(' ') %}
+    {% if elem != '' %}
+        {% set dummy_var = clean_line.append(elem) %}
+    {% endif %}
+{% endfor %}
+
+{% if 'Name' in line_entry %}
+        hostname: {{ clean_line[2] }}
+{% endif %}
+
+{% if 'Type' in line_entry %}
+        type: {{ ' '.join(clean_line[2:]) }}
+{% endif %}
+
+{% if 'Over Temperature state' in line_entry %}
+        temperature: {{ clean_line[4] }}
+{% endif %}
+
+{% if 'Current alarm state' in line_entry %}
+        alarm_state: {{ ' '.join(clean_line[4:]) }}
+{% endif %}
+
+{% if 'Number of fan trays' in line_entry %}
+        fans_trays: {{ clean_line[5] }}
+{% endif %}
+
+{% if 'Number of fans' in line_entry %}
+        fans: {{ clean_line[4] }}
+{% endif %}
+
+{% if 'Environment Information' in line_entry %}
+    {% set fans_values.found = true %}
+{% endif %}
+
+{% if 'Status' in line_entry and fans_values.found and 'up' in line_entry%}
+    {% set count.value = count.value + 1 %}
+{% endif %}
+
+{% if 'Number of power supplies' in line_entry %}
+        fans_status_up: {{ count.value }}
+        power_supplies: {{ clean_line[5] }}
+{% set count.value = 0 %}
+{% set fans_values.found = false %}
+{% endif %}
+
+{% if 'Defaulted power supply type' in line_entry %}
+{% if 'ac' in line_entry %}
+        power_supplies_type: ac
+{% else %}
+        power_supplies_type: dc
+{% endif%}
+{% endif %}
+
+{% if 'Status' in line_entry and fans_values.found == false and 'up' in line_entry %}
+    {% set count.value = count.value + 1 %}
+{% endif %}
+
+{% endfor %}
+        power_status_up: {{ count.value }}
+
+{% endif %}
+
+
+{% if loop.index0 == 2 %}
+# FOR THE COMMAND 'SHOW CARD'
+    cards:
+{% for line_entry in show_entry %}
+    {% set clean_line = [] %}
+    {% for elem in line_entry.split(' ') %}
+        {% if elem != '' %}
+            {% set dummy_var = clean_line.append(elem) %}
+        {% endif %}
+    {% endfor %}
+    {% if 'unprovisioned' in line_entry %}
+        {{ line_entry.split(' ')[0] }}:
+            type: {{ show_entry[loop.index0 + 1] | replace(' ', '') }}
+            state: {{ clean_line[4] }}
+    {% elif 'up' in line_entry %}
+        {{ line_entry.split(' ')[0] }}:
+            type: {{ clean_line[1] }}
+            state: {{ clean_line[3] }}
+    {% endif %}
+{% endfor %}
+{% endif %}
+
+
+{% if loop.index0 == 3 %}
+# FOR THE COMMAND 'SHOW MDA'
+    mdas:
+{% for line_entry in show_entry %}
+    {% set clean_line = [] %}
+    {% for elem in line_entry.split(' ') %}
+        {% if elem != '' %}
+            {% set dummy_var = clean_line.append(elem) %}
+        {% endif %}
+    {% endfor %}
+    {% if 'unprovisioned' in line_entry %}
+        {{ line_entry.split(' ')[0]}}:
+            type: {{ show_entry[loop.index0 + 1] | replace(' ', '') }}
+            state: {{ clean_line[4] }}
+    {% elif 'up' in line_entry %}
+        {% if clean_line|length == 5 %}
+        {{ clean_line[1] }}:
+            type: {{ clean_line[2] }}
+            state: {{ clean_line[4] }}
+        {% else %}
+        {{ clean_line[0] }}:
+            type: {{ clean_line[1] }}
+            state: {{ clean_line[3] }}
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+{% endif %}
+
+{% endfor %}
+
+
+

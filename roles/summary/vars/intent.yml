@@ -1,0 +1,26 @@
+device_intent:
+  version: 6.0.7
+  system:
+    type: Nuage Networks 210 WBX-32Q
+    temperature: OK
+    alarm_state: alarm clared
+    fans_trays: 5
+    fans: 10
+    fans_status_up: 5
+    power_supplies: 2
+    power_supplies_type: dc
+    power_status_up: 2
+  cards:
+    1:
+      type: iom-32-100g
+      state: up
+    A:
+      type: sfm-210-WBX
+      state: up/active
+  mdas:
+    1:
+      type: m16-100g-qsfp28
+      state: up
+    2:
+      type: m16-100g-qsfp28
+      state: up

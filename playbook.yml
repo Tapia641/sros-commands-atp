@@ -1,0 +1,6 @@
+- name: Module to get the version from the WBX
+  hosts: leafs
+  gather_facts: no
+  connection: local
+  roles:
+  - role-version

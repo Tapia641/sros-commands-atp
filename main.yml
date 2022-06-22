@@ -1,0 +1,14 @@
+- name: MODULE TO RUN A HEALTCHECK OR PRECHECK IN WBX
+  hosts: all:children
+  gather_facts: no
+  connection: ansible.netcommon.network_cli
+  
+  # pre_tasks:
+  #   - name: DO PING TO THE ELEMENTS
+  #     command: hostname
+  #     assert:
+  #       that: "ansibl_version.minor >= 2"
+  #       msg: "Only ansible version 2 or greater is supported for this playbook, you are using {{ansible_version}}"
+
+  roles:
+    - roles/summary
