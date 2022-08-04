@@ -1,6 +1,0 @@
----
-# vars file for role-version
-vars:
-  cli:
-    host: "{{ inventory_hostname }}"
-    transport: cli

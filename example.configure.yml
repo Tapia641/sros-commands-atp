@@ -1,0 +1,112 @@
+---
+- hosts: nokia
+  gather_facts: no
+  connection: local
+
+  vars:
+    cli:
+      host: "{{ inventory_hostname }}"
+      username: admin
+      password: admin
+      transport: cli
+
+  tasks:
+    - name: GLOBAL / prepare port
+      sros_config:
+        lines:
+          - ethernet mode access
+          - ethernet encap-type dot1q
+          - ethernet dot1q 1518
+          - no shutdown
+        parents:
+          - configure
+          - port 1/1/2
+        provider: "{{ cli }}"
+
+    - name: GLOBAL / ACL / create IPv4
+      sros_config:
+        lines:
+          - match dst-ip 192.168.1.0/24 
+          - action forward
+        parents:
+          - configure
+          - filter
+          - ip-filter 10 create
+          - entry 10 create
+        provider: "{{ cli }}"
+
+    - name: GLOBAL / ACL / create IPv6
+      sros_config:
+        lines:
+          - match dst-ip fc00::192:168:1:0/112
+          - action forward
+        parents:
+          - configure
+          - filter
+          - ipv6-filter 10 create
+          - entry 10 create
+        provider: "{{ cli }}"
+
+    - name: SERVICE / create and configure customer
+      sros_config:
+        lines:
+          - description CUST_100500
+          - contact ololo@ololo.lo
+        parents:
+          - configure
+          - service
+          - customer 100500 create
+        provider: "{{ cli }}"
+
+    - name: SERVICE / VPRN / create and configure parameters
+      sros_config:
+        lines:
+          - route-distinguisher {{inventory_hostname}}:100
+          - vrf-target target:65000:100
+          - autonomus-system 65000
+        parents:
+          - configure
+          - service
+          - vprn 100500 customer 100500 create
+        provider: "{{ cli }}"
+
+    - name: SERVICE / VPRN / create and configure interface
+      sros_config:
+        lines:
+          - address 192.168.1.1/24
+          - ipv6 address fc00::192:168:1:1/120
+        parents:
+          - configure
+          - service
+          - vprn 100500
+          - interface toCUST create
+        provider: "{{ cli }}"
+
+    - name: SERVICE / VPRN / add SAP and ACL
+      sros_config:
+        lines:
+          - ingress filter ip 10
+          - ingress filter ipv6 10
+        parents:
+          - configure
+          - service
+          - vprn 100500
+          - interface toCUST
+          - sap 1/1/2:123 create
+        provider: "{{ cli }}"
+
+    - name: SERVICE / VPRN / launch
+      sros_config:
+        lines:
+          - no shutdown
+        parents:
+          - configure
+          - service
+          - vprn 100500
+        provider: "{{ cli }}"
+
+    - name: SAVE
+      sros_command:
+        commands:
+          - admin save
+        provider: "{{ cli }}"

@@ -7,6 +7,12 @@
       - show chassis
       - show card
       - show mda
+      - show port | match cgige
+      - show bof
+      - show system ntp servers
+      - show router bgp summary
+      - show vswitch-controller vsd
+      - show vswitch-controller xmpp-server
     # wait_for: result[0] contains Functional
     # provider: "{{ cli }}"
   register: show_output
@@ -15,7 +21,7 @@
   template:
     src: roles/summary/templates/classic_summary.j2
     dest: results/{{ inventory_hostname }}_data.yml
-# - debug: msg="{{ show_output.stdout_lines }}"
+- debug: msg="{{ show_output.stdout_lines }}"
 
 - name: IMPORT THE DATASET GENERATED
   include_vars:

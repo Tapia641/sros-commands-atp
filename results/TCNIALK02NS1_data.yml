@@ -54,7 +54,7 @@ device_real:
 
 
 
-        hostname: sch4wbxims_lf02
+        hostname: POM1SP02
 
 
 
@@ -850,6 +850,42 @@ device_real:
         2:
             type: m16-100g-qsfp28
             state: up
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

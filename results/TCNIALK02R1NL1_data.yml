@@ -54,7 +54,7 @@ device_real:
 
 
 
-        hostname: leaf01
+        hostname: LS06BY102
 
 
 
@@ -850,6 +850,42 @@ device_real:
         2:
             type: m16-100g-qsfp28
             state: up
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

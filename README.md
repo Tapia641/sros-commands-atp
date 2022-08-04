@@ -15,8 +15,8 @@ ansible-galaxy init role-name
 ``
 
 
-To use it: 
+To use it: The scope is basic testing of WBX-210 acting as “leaf-switch” in Nuage Network Architecture.
 
 ``
-ansible-playbook playbook.yml
+ansible-playbook main.yml -i inventory/inventory.ini
 ``# ansible-common

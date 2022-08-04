@@ -1,0 +1,28 @@
+---
+# tasks file for roles/vsd
+- name: COLLECT DATA VSD
+  sros_command:
+    commands:
+      - show bof
+      # - show vswitch-controller xmpp-server
+#       - show vswitch-controller vsd
+#   register: show_output
+
+# - name: GENERATE THE DATASET
+#   template:
+#     src: roles/vsd/templates/vsd_summary.j2
+#     dest: results/{{ inventory_hostname }}_data.yml
+# - debug: msg="{{ show_output.stdout_lines }}"
+
+# - name: IMPORT THE DATASET GENERATED
+#   include_vars:
+#     file: results/{{ inventory_hostname }}_data.yml
+
+# - name: IMPORT THE INTENT DATASET
+#   include_vars:
+#     file: roles/vsd/vars/intent.yml
+
+# - name: DO THE DIFF ANALYSE
+#   template:
+#     src: roles/vsd/templates/diff_analyse.j2
+#     dest: results/{{ inventory_hostname }}_report.txt

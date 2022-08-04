@@ -11,4 +11,6 @@
   #       msg: "Only ansible version 2 or greater is supported for this playbook, you are using {{ansible_version}}"
 
   roles:
-    - roles/summary
+    - name: roles/summary
+    # - name: roles/vsd
+    # - roles/vsd
